@@ -96,39 +96,83 @@ describe Board do
 
   context "check diagonal method for ABOVE sector" do 
     let(:search_area) { "above" }
+
+# Test hash
+        # row1: "X O O O O O X",
+        # row2: "O X X O X X O",
+        # row3: "O O X X X O O",
+        # row4: "O O X X X O O",
+        # row5: "O O O O O O O",
+        # row6: "O O O O O O O"
+        
+# check_diagonal(search_area, direction, x, y, player)
+
+    test_hash = {
+        row1: [1, nil, nil, nil, nil, nil, 1],
+        row2: [nil, 1, 1, nil, 1, 1, nil],
+        row3: [nil, nil, 1, 1, 1, nil, nil],
+        row4: [nil, nil, 1, 1, 1, nil, nil],
+        row5: [nil, nil, nil, nil, nil, nil, nil],
+        row6: [nil, nil, nil, nil, nil, nil, nil]      
+    }
     it "ABOVE: Can verify RIGHT winning diagonal" do
-      
+      board.load_hash(test_hash)
+      expect(board.check_diagonal(search_area, "right", 3, 3, 1)).to eq true
     end
 
     it "ABOVE: Can verify RIGHT unfinished diagonal" do
-            
+      board.load_hash(test_hash)
+      expect(board.check_diagonal(search_area, "right", 3, 2, 1)).to eq false
     end 
 
     it "ABOVE: Can verify LEFT winning diagonal" do
-      
+      board.load_hash(test_hash)
+      expect(board.check_diagonal(search_area, "left", 3, 3, 1)).to eq true
     end
 
     it "ABOVE: Can verify LEFT unfinished diagonal" do
-      
+      board.load_hash(test_hash)
+      expect(board.check_diagonal(search_area, "left", 3, 2, 1)).to eq false
     end
   end
 
   context "check diagonal method for BELOW sector" do 
     let(:search_area) { "below" }
+
+# Test_hash
+        # row1: "0 O O O O O 0",
+        # row2: "O 0 0 O 0 0 O",
+        # row3: "O O X X X O O",
+        # row4: "O O X X X O O",
+        # row5: "O X X O X X O",
+        # row6: "X O O O O O X"
+
+    test_hash = {
+        row1: [nil, nil, nil, nil, nil, nil, nil],
+        row2: [nil, nil, nil, nil, nil, nil, nil],
+        row3: [nil, nil, 1, 1, 1, nil, nil],
+        row4: [nil, nil, 1, 1, 1, nil, nil],
+        row5: [nil, 1, 1, nil, 1, 1, nil],
+        row6: [1, nil, nil, nil, nil, nil, 1]     
+    }
     it "BELOW: Can verify RIGHT winning diagonal" do
-      
+      board.load_hash(test_hash)
+      expect(board.check_diagonal(search_area, "right", 3, 3, 1)).to eq true
     end
 
     it "BELOW: Can verify RIGHT unfinished diagonal" do
-            
+      board.load_hash(test_hash)
+      expect(board.check_diagonal(search_area, "left", 3, 2, 1)).to eq false
     end 
 
     it "BELOW: Can verify LEFT winning diagonal" do
-      
+      board.load_hash(test_hash)
+      expect(board.check_diagonal(search_area, "right", 3, 3, 1)).to eq true
     end
 
     it "BELOW: Can verify LEFT unfinished diagonal" do
-      
+      board.load_hash(test_hash)
+      expect(board.check_diagonal(search_area, "left", 3, 2, 1)).to eq false
     end
   end
 

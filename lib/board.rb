@@ -61,7 +61,7 @@ class Board
     false
   end
 
-  def horizontal? # Rewrite with player and position as arguments
+  def horizontal? # Rewrite with player and position as arguments (Or not, lol)
     win = false
       @board_hash.each do |row, array|
         if array.count(nil) <= 3 
@@ -128,7 +128,7 @@ class Board
         check_row(x, y, player) ? chip_counter += 1 : status = false
       end      
     end
-    
+
     return true if chip_counter == 4
     false
   end
@@ -146,5 +146,9 @@ class Board
 
   def clear
     system("clear")
+  end
+
+  def load_hash(hash) # For testing service
+    @board_hash = hash
   end
 end

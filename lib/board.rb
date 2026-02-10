@@ -12,6 +12,16 @@ class Board
       row5: Array.new(7, nil),
       row6: Array.new(7, nil)    
     }
+
+    @test_hash = {
+      row1: Array.new(7, 1),
+      row2: Array.new(7, 1),
+      row3: Array.new(7, 1),
+      row4: Array.new(7, 1),
+      row5: Array.new(7, 1),
+      row6: Array.new(7, 1)
+    }
+
   end
 
   def state
@@ -85,13 +95,13 @@ class Board
 
   def diagonal?(player, position)
     win = false
+    y = position - 1
 
     x = -1
     search_area = nil
-    @board_hash.each { |row, array| x += 1 if array[position-1] != nil}
-    x < 4 ? search_area = "below" : search_area = "above"
+    @board_hash.each { |row, array| x += 1 if array[y] == 1 || array[y] == 2}
+    x <= 2 ? search_area = "below" : search_area = "above"
     
-    y = position - 1
     case y
     when y < 3 then win = check_diagonal(search_area, "right", x, y, player)
     when y > 3 then win = check_diagonal(search_area, "left", x, y, player)
@@ -108,40 +118,40 @@ class Board
     chip_counter = 1
     status = true
 
-    if search_area == "above"  
-      unless chip_counter == 4 || !status
-        x += 1
-        case direction
-        when "left" then y -= 1
-        when "right" then y += 1
-        end
-        check_row(x, y, player) ? chip_counter += 1 : status = false
+    until chip_counter == 4 || !status
+      if search_area == "above"  
+          x -= 1
+          case direction
+          when "left" then y -= 1
+          when "right" then y += 1
+          end
+          check_row(x, y, player) ? chip_counter += 1 : status = false
+
+      elsif search_area == "below"
+          x += 1
+          case direction
+          when "left" then y -= 1  
+          when "right" then y += 1
+          end
+          check_row(x, y, player) ? chip_counter += 1 : status = false    
       end
-
-    elsif search_area == "below"
-      unless chip_counter == 4 || !status
-        x -= 1
-        case direction
-        when "left" then y -= 1  
-        when "right" then y += 1
-        end
-        check_row(x, y, player) ? chip_counter += 1 : status = false
-      end      
     end
-
     return true if chip_counter == 4
     false
   end
 
   def check_row(coordinate_x, coordinate_y, player)
+    result = nil
     @board_hash.each do |row, array|
-      until coordinate_x == 0
+      if coordinate_x != 0
         coordinate_x -= 1
         next
+      else
+        array[coordinate_y] == player ? result = true : result = false
+        break
       end
-      return true if array[coordinate_y] == player
     end
-    false
+    result
   end
 
   def clear

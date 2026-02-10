@@ -65,20 +65,20 @@ class Board
   end
 
   def win?(player, position)
-    return true if horizontal?
+    return true if horizontal?(player)
     return true if vertical?(player, position)
     return true if diagonal?(player, position)
     false
   end
 
-  def horizontal? # Rewrite with player and position as arguments (Or not, lol)
+  def horizontal?(player)
     win = false
-      @board_hash.each do |row, array|
-        if array.count(nil) <= 3 
-          array.each_cons(4) {|a, b, c, d| win = true if (a == b && b == c && c == d)}
-          break if win
-        end     
-      end
+    @board_hash.each do |row, array|
+      if array.count(nil) <= 3 && array.count(player) >= 4
+        array.each_cons(4) {|a, b, c, d| win = true if (a == b && b == c && c == d)}
+        break if win
+      end     
+    end
     win
   end
 
@@ -141,17 +141,8 @@ class Board
   end
 
   def check_row(coordinate_x, coordinate_y, player)
-    result = nil
-    @board_hash.each do |row, array|
-      if coordinate_x != 0
-        coordinate_x -= 1
-        next
-      else
-        array[coordinate_y] == player ? result = true : result = false
-        break
-      end
-    end
-    result
+    key = "row#{coordinate_x+1}".to_sym
+    @board_hash[key][coordinate_y] == player ? true : false
   end
 
   def clear

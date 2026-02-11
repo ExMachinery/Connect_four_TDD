@@ -94,50 +94,87 @@ class Board
   end
 
   def diagonal?(player, position)
-    win = false
     y = position - 1
-
     x = -1
-    search_area = nil
     @board_hash.each { |row, array| x += 1 if array[y] == 1 || array[y] == 2}
-    x <= 2 ? search_area = "below" : search_area = "above"
-    
-    case y
-    when y < 3 then win = check_diagonal(search_area, "right", x, y, player)
-    when y > 3 then win = check_diagonal(search_area, "left", x, y, player)
-    else
-      win = check_diagonal(search_area, "left", x, y, player)
-      if !win
-        win = check_diagonal(search_area, "right", x, y, player)
-      end
-    end
-    win
+    return true if check_ad_diagonal(x, y, player) || check_bc_diagonal(x, y, player)
+    false
+
+    # Diagonal marker reference
+    # A\  /B
+    #   \/
+    #   /\
+    # C/  \D
   end
 
-  def check_diagonal(search_area, direction, x, y, player)
+  def check_ad_diagonal(x, y, player)
     chip_counter = 1
+    x_save = x.dup
+    y_save = y.dup
+    
+    # From A to D(x+ y+)
     status = true
-
     until chip_counter == 4 || !status
-      if search_area == "above"  
-          x -= 1
-          case direction
-          when "left" then y -= 1
-          when "right" then y += 1
-          end
-          check_row(x, y, player) ? chip_counter += 1 : status = false
+      x += 1
+      y += 1
+      if x < 0 || y < 0 || x > 5 || y > 6
+        status = false
+        break
+      end
+      check_row(x, y, player) ? chip_counter += 1 : status = false
+    end
 
-      elsif search_area == "below"
-          x += 1
-          case direction
-          when "left" then y -= 1  
-          when "right" then y += 1
-          end
-          check_row(x, y, player) ? chip_counter += 1 : status = false    
+    # From D to A (x- y-)
+    if chip_counter < 4
+      status = true
+      x = x_save
+      y = y_save
+      until chip_counter == 4 || !status
+        x -= 1
+        y -= 1
+        if x < 0 || y < 0 || x > 5 || y > 6
+          status = false
+          break
+        end
+        check_row(x, y, player) ? chip_counter += 1 : status = false
       end
     end
-    return true if chip_counter == 4
-    false
+    chip_counter == 4 ? true : false
+  end
+
+  def check_bc_diagonal(x, y, player)
+    chip_counter = 1
+    x_save = x.dup
+    y_save = y.dup
+    
+    # From B to C (x+ y-)
+    status = true
+    until chip_counter == 4 || !status
+      x += 1
+      y -= 1
+      if x < 0 || y < 0 || x > 5 || y > 6
+        status = false
+        break
+      end
+      check_row(x, y, player) ? chip_counter += 1 : status = false
+    end
+
+    # From C to B (x- y+)
+    if chip_counter < 4
+      status = true
+      x = x_save
+      y = y_save
+      until chip_counter == 4 || !status
+        x -= 1
+        y += 1
+        if x < 0 || y < 0 || x > 5 || y > 6
+          status = false
+          break
+        end
+        check_row(x, y, player) ? chip_counter += 1 : status = false
+      end
+    end
+    chip_counter == 4 ? true : false
   end
 
   def check_row(coordinate_x, coordinate_y, player)

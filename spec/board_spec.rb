@@ -95,7 +95,6 @@ describe Board do
   end
 
   context "check diagonal method for ABOVE sector" do 
-    let(:search_area) { "above" }
 
 # Test hash
         # row1: "X F F F F F X",
@@ -106,64 +105,88 @@ describe Board do
         # row6: "O O O O O O O"
 
     test_hash = {
-        row1: [1, 5, 5, 5, 5, 5, 1],
-        row2: [nil, 1, 1, 5, 1, 1, nil],
-        row3: [nil, nil, 1, 1, 1, nil, nil],
-        row4: [nil, nil, 1, 1, 1, nil, nil],
-        row5: [nil, nil, nil, nil, nil, nil, nil],
-        row6: [nil, nil, nil, nil, nil, nil, nil]      
+        row1: [1, 2, 2, 2, 2, 2, 1],
+        row2: [5, 1, 1, 2, 1, 1, 5],
+        row3: [5, 5, 1, 1, 1, 5, 5],
+        row4: [5, 5, 1, 1, 1, 5, 5],
+        row5: [5, 5, 5, 5, 5, 5, 5],
+        row6: [5, 5, 5, 5, 5, 5, 5]      
     }
 
     it "ABOVE: Can verify RIGHT winning diagonal" do
       board.load_hash(test_hash)
-      expect(board.check_diagonal(search_area, "right", 3, 3, 1)).to eq true
+      expect(board.diagonal?(1, 4)).to eq true
     end
 
     it "ABOVE: Can verify RIGHT unfinished diagonal" do
       board.load_hash(test_hash)
-      expect(board.check_diagonal(search_area, "right", 3, 2, 1)).to eq false
+      expect(board.diagonal?(1, 3)).to eq false
     end 
 
     it "ABOVE: Can verify LEFT winning diagonal" do
       board.load_hash(test_hash)
-      expect(board.check_diagonal(search_area, "left", 3, 3, 1)).to eq true
+      expect(board.diagonal?(1, 4)).to eq true
     end
 
     it "ABOVE: Can verify LEFT unfinished diagonal" do
       board.load_hash(test_hash)
-      expect(board.check_diagonal(search_area, "left", 3, 4, 1)).to eq false
+      expect(board.diagonal?(1, 5)).to eq false
     end
   end
 
   context "check diagonal method for BELOW sector" do 
     let(:search_area) { "below" }
 
-    test_hash = {
-        row1: [5, 5, 5, 5, 5, 5, 5],
-        row2: [5, 5, 5, 5, 5, 5, 5],
-        row3: [5, 5, 1, 1, 1, 5, 5],
-        row4: [5, 5, 1, 1, 1, 5, 5],
-        row5: [5, 1, 1, 5, 1, 1, 5],
+    test_hash_finished = {
+        row1: [2, 2, 2, 2, 2, 2, 2],
+        row2: [2, 2, 2, 1, 2, 2, 2],
+        row3: [2, 2, 1, 1, 1, 2, 2],
+        row4: [2, 1, 1, 5, 1, 1, 2],
+        row5: [2, 1, 5, 5, 5, 1, 2],
+        row6: [1, 5, 5, 5, 5, 5, 1]     
+    }
+    test_hash_unfinished = {
+        row1: [2, 2, 2, 2, 2, 2, 2],
+        row2: [2, 2, 2, 1, 2, 2, 2],
+        row3: [2, 2, 1, 5, 1, 2, 2],
+        row4: [2, 1, 1, 5, 1, 1, 2],
+        row5: [2, 1, 5, 5, 5, 1, 2],
         row6: [1, 5, 5, 5, 5, 5, 1]     
     }
     it "BELOW: Can verify RIGHT winning diagonal" do
-      board.load_hash(test_hash)
-      expect(board.check_diagonal(search_area, "right", 2, 3, 1)).to eq true
+      board.load_hash(test_hash_finished)
+      expect(board.diagonal?(1, 4)).to eq true
     end
 
     it "BELOW: Can verify RIGHT unfinished diagonal" do
-      board.load_hash(test_hash)
-      expect(board.check_diagonal(search_area, "left", 2, 2, 1)).to eq false
+      board.load_hash(test_hash_unfinished)
+      expect(board.diagonal?(1, 4)).to eq false
     end 
 
     it "BELOW: Can verify LEFT winning diagonal" do
-      board.load_hash(test_hash)
-      expect(board.check_diagonal(search_area, "right", 2, 3, 1)).to eq true
+      board.load_hash(test_hash_finished)
+      expect(board.diagonal?(1, 4)).to eq true
     end
 
     it "BELOW: Can verify LEFT unfinished diagonal" do
+      board.load_hash(test_hash_unfinished)
+      expect(board.diagonal?(1, 4)).to eq false
+    end
+  end
+
+  context "#diagonal? handles" do
+
+    test_hash = {
+        row1: [2, 2, 2, 2, 2, 2, 2],
+        row2: [2, 2, 2, 2, 2, 2, 2],
+        row3: [2, 2, 1, 1, 1, 2, 2],
+        row4: [2, 2, 1, 5, 1, 2, 2],
+        row5: [2, 1, 5, 5, 5, 1, 2],
+        row6: [1, 5, 5, 5, 5, 5, 1]     
+    }
+    it "chip-in-the-middle edge case" do
       board.load_hash(test_hash)
-      expect(board.check_diagonal(search_area, "left", 2, 4, 1)).to eq false
+      expect(board.diagonal?(1, 2)).to eq true
     end
   end
 

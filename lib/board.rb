@@ -97,7 +97,8 @@ class Board
     y = position - 1
     x = -1
     @board_hash.each { |row, array| x += 1 if array[y] == 1 || array[y] == 2}
-    return true if check_ad_diagonal(x, y, player) || check_bc_diagonal(x, y, player)
+    # return true if check_ad_diagonal(x, y, player) || check_bc_diagonal(x, y, player)
+    return true if check_diagonal(x, y, player)
     false
 
     # Diagonal marker reference
@@ -177,13 +178,35 @@ class Board
     chip_counter == 4 ? true : false
   end
 
+  def check_diagonal(x, y, player)
+    chip_counter = 1
+    chip_counter = check_diagonal_cross(x, y, 1, -1, player, chip_counter)
+    chip_counter = check_diagonal_cross(x, y, -1, 1, player, chip_counter) if chip_counter < 4
+    return true if chip_counter >= 4
+    chip_counter = 1
+    chip_counter = check_diagonal_cross(x, y, 1, 1, player, chip_counter)
+    chip_counter = check_diagonal_cross(x, y, -1, -1, player, chip_counter) if chip_counter < 4
+    return true if chip_counter >= 4
+    false  
+  end
+
+  def check_diagonal_cross(x, y, x_modify, y_modify, player, chip_counter)
+    status = true
+    until chip_counter == 4 || !status
+      x += x_modify
+      y += y_modify
+      if x < 0 || y < 0 || x > 5 || y > 6
+        status = false
+        break
+      end
+      check_row(x, y, player) ? chip_counter += 1 : status = false
+    end
+    return chip_counter
+  end
+
   def check_row(coordinate_x, coordinate_y, player)
     key = "row#{coordinate_x+1}".to_sym
     @board_hash[key][coordinate_y] == player ? true : false
-  end
-
-  def clear
-    system("clear")
   end
 
   def load_hash(hash) # For testing service

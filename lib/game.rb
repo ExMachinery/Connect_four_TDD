@@ -17,11 +17,8 @@ class Game
     player2.name = gets.chomp
   end
 
-  def player1_name?
-    "Bob"
+  def clear
+    system("clear")
   end
 
-  def player2_name?
-    "Rob"
-  end
 end

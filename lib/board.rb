@@ -33,6 +33,7 @@ class Board
         when nil then to_render << @empty
         when 1 then to_render << @p1
         when 2 then to_render << @p2
+        when 7 then to_render << @win_chip
         end
       end
       board_state[key] = to_render
@@ -73,13 +74,40 @@ class Board
     false
   end
 
+  def draw?
+    draw_checker = @board_hash.map {|key, val| val.include?(nil)}
+    return draw_checker.empty?
+  end
+
   def horizontal?(player)
     win = false
     @board_hash.each do |row, array|
       if array.count(nil) <= 3 && array.count(player) >= 4
-        array.each_cons(4) {|a, b, c, d| win = true if (a == b && b == c && c == d)}
-        break if win
-      end     
+        chip_counter = 0
+        array.each_with_index do |val, ind|
+          val == player ? chip_counter += 1 : chip_counter = 0
+          if chip_counter == 4
+            4.times {|i| @board_hash[row][ind - i] = 7}
+            win = true
+          end
+          break if win
+        end
+      end
+    end
+    win
+  end
+
+  def show_winning_line(row, index)
+
+  end
+
+  def mok_vertical?(player, position)
+    win = false
+    chip_counter = 0
+    @board_hash.each do |row, array|
+      array[position-1] == player ? chip_counter += 1 : chip_counter = 0
+      win = true if chip_counter == 4
+      break if win
     end
     win
   end
@@ -87,10 +115,20 @@ class Board
   def vertical?(player, position)
     win = false
     chip_counter = 0
+    winning_rows = []
     @board_hash.each do |row, array|
-      array[position-1] == player ? chip_counter += 1 : chip_counter = 0
+      if array[position-1] == player
+        chip_counter += 1
+        winning_rows << row
+      else
+        chip_counter = 0
+        winning_rows = []
+      end
       win = true if chip_counter == 4
       break if win
+    end
+    if win
+      winning_rows.each {|key| @board_hash[key][position-1] = 7}
     end
     win
   end

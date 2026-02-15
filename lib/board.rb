@@ -97,21 +97,6 @@ class Board
     win
   end
 
-  def show_winning_line(row, index)
-
-  end
-
-  def mok_vertical?(player, position)
-    win = false
-    chip_counter = 0
-    @board_hash.each do |row, array|
-      array[position-1] == player ? chip_counter += 1 : chip_counter = 0
-      win = true if chip_counter == 4
-      break if win
-    end
-    win
-  end
-
   def vertical?(player, position)
     win = false
     chip_counter = 0
@@ -137,7 +122,6 @@ class Board
     y = position - 1
     x = -1
     @board_hash.each { |row, array| x += 1 if array[y] == 1 || array[y] == 2}
-    # return true if check_ad_diagonal(x, y, player) || check_bc_diagonal(x, y, player)
     return true if check_diagonal(x, y, player)
     false
 
@@ -150,13 +134,17 @@ class Board
 
   def check_diagonal(x, y, player)
     chip_counter = 1
+    check_row(x, y, player)
     chip_counter = check_diagonal_cross(x, y, 1, -1, player, chip_counter)
     chip_counter = check_diagonal_cross(x, y, -1, 1, player, chip_counter) if chip_counter < 4
     return true if chip_counter >= 4
+    clear_mess(player)
     chip_counter = 1
+    check_row(x, y, player)
     chip_counter = check_diagonal_cross(x, y, 1, 1, player, chip_counter)
     chip_counter = check_diagonal_cross(x, y, -1, -1, player, chip_counter) if chip_counter < 4
     return true if chip_counter >= 4
+    clear_mess(player)
     false  
   end
 
@@ -165,18 +153,33 @@ class Board
     until chip_counter == 4 || !status
       x += x_modify
       y += y_modify
+      puts "Checking coordinates #{x}, #{y}"
       if x < 0 || y < 0 || x > 5 || y > 6
         status = false
         break
       end
       check_row(x, y, player) ? chip_counter += 1 : status = false
     end
+    puts "CC: #{chip_counter}"
     return chip_counter
   end
 
   def check_row(coordinate_x, coordinate_y, player)
+    result = nil
     key = "row#{coordinate_x+1}".to_sym
-    @board_hash[key][coordinate_y] == player ? true : false
+    if @board_hash[key][coordinate_y] == player 
+      result = true
+      @board_hash[key][coordinate_y] = 7
+    else
+      result = false
+    end
+    result
+  end
+  
+  def clear_mess(player)
+    @board_hash.each do |row, array|
+      array.each_with_index {|val, ind| @board_hash[row][ind] = player if val == 7}
+    end
   end
 
   def load_hash(hash) # For testing service

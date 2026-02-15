@@ -1,8 +1,8 @@
 class Board
   def initialize
-    @empty = "O"
+    @empty = "\u26AB"
     @p1 = "\u26AA"
-    @p2 = "\u26AB"
+    @p2 = "\u26BD"
     @win_chip = "\u26D4"
     @board_hash = {
       row1: Array.new(7, nil),
@@ -43,12 +43,14 @@ class Board
   def prepare_render
     for_render = {}
     self.state.each { |key, val| for_render[key] = val.join(" ") }
-    for_render
+    # Mirrior
+    for_render_mirrior = for_render.to_a.reverse.to_h
+    for_render_mirrior
   end
 
   def render_board
-    puts "1 2 3 4 5 6 7"
-    puts "-------------"
+    puts " 1  2  3  4  5  6  7 "
+    puts "====================="
     prepare_render.each {|key, val| puts "#{val}"}
   end
 
@@ -106,76 +108,6 @@ class Board
     #   \/
     #   /\
     # C/  \D
-  end
-
-  def check_ad_diagonal(x, y, player)
-    chip_counter = 1
-    x_save = x.dup
-    y_save = y.dup
-    
-    # From A to D(x+ y+)
-    status = true
-    until chip_counter == 4 || !status
-      x += 1
-      y += 1
-      if x < 0 || y < 0 || x > 5 || y > 6
-        status = false
-        break
-      end
-      check_row(x, y, player) ? chip_counter += 1 : status = false
-    end
-
-    # From D to A (x- y-)
-    if chip_counter < 4
-      status = true
-      x = x_save
-      y = y_save
-      until chip_counter == 4 || !status
-        x -= 1
-        y -= 1
-        if x < 0 || y < 0 || x > 5 || y > 6
-          status = false
-          break
-        end
-        check_row(x, y, player) ? chip_counter += 1 : status = false
-      end
-    end
-    chip_counter == 4 ? true : false
-  end
-
-  def check_bc_diagonal(x, y, player)
-    chip_counter = 1
-    x_save = x.dup
-    y_save = y.dup
-    
-    # From B to C (x+ y-)
-    status = true
-    until chip_counter == 4 || !status
-      x += 1
-      y -= 1
-      if x < 0 || y < 0 || x > 5 || y > 6
-        status = false
-        break
-      end
-      check_row(x, y, player) ? chip_counter += 1 : status = false
-    end
-
-    # From C to B (x- y+)
-    if chip_counter < 4
-      status = true
-      x = x_save
-      y = y_save
-      until chip_counter == 4 || !status
-        x -= 1
-        y += 1
-        if x < 0 || y < 0 || x > 5 || y > 6
-          status = false
-          break
-        end
-        check_row(x, y, player) ? chip_counter += 1 : status = false
-      end
-    end
-    chip_counter == 4 ? true : false
   end
 
   def check_diagonal(x, y, player)

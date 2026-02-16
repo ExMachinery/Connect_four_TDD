@@ -60,13 +60,15 @@ class Game
       until valid
         clear
         board.render_board
-        win = nil if board.draw?
-        @player_pick = validate_pick(turn)
-        if board.change_state(player_num, @player_pick) == nil
-          puts "This column is full. Try another one"
-        else
-          valid = true
-          win = board.win?(player_num, @player_pick)
+        win = nil; valid = true if board.draw?
+        if win != nil
+          @player_pick = validate_pick(turn)
+          if board.change_state(player_num, @player_pick) == nil 
+            puts "This column is full. Try another one"
+          else
+            valid = true
+            win = board.win?(player_num, @player_pick)
+          end
         end
       end
     end

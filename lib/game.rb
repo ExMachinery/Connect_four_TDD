@@ -93,5 +93,4 @@ class Game
   def clear
     system("clear")
   end
-
 end

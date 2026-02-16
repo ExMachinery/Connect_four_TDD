@@ -12,16 +12,6 @@ class Board
       row5: Array.new(7, nil),
       row6: Array.new(7, nil)    
     }
-
-    @test_hash = {
-      row1: Array.new(7, 1),
-      row2: Array.new(7, 1),
-      row3: Array.new(7, 1),
-      row4: Array.new(7, 1),
-      row5: Array.new(7, 1),
-      row6: Array.new(7, 1)
-    }
-
   end
 
   def state
@@ -124,12 +114,6 @@ class Board
     @board_hash.each { |row, array| x += 1 if array[y] == 1 || array[y] == 2}
     return true if check_diagonal(x, y, player)
     false
-
-    # Diagonal marker reference
-    # A\  /B
-    #   \/
-    #   /\
-    # C/  \D
   end
 
   def check_diagonal(x, y, player)
@@ -153,14 +137,12 @@ class Board
     until chip_counter == 4 || !status
       x += x_modify
       y += y_modify
-      puts "Checking coordinates #{x}, #{y}"
       if x < 0 || y < 0 || x > 5 || y > 6
         status = false
         break
       end
       check_row(x, y, player) ? chip_counter += 1 : status = false
     end
-    puts "CC: #{chip_counter}"
     return chip_counter
   end
 
